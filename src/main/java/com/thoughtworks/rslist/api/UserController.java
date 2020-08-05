@@ -2,6 +2,7 @@ package com.thoughtworks.rslist.api;
 
 import com.thoughtworks.rslist.domain.User;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,5 +23,9 @@ public class UserController {
             userList.add(user);
         }
         return ResponseEntity.created(null).header("index", String.valueOf(userList.size() - 1)).build();
+    }
+    @GetMapping("/users")
+    public ResponseEntity addUser(){
+        return ResponseEntity.ok(userList);
     }
 }
