@@ -71,9 +71,7 @@ class UserControllerTest {
     }
     @Test
     void should_return_400_when_email_is_wrong() throws Exception {
-        User user = new User("wzw","male",22,"wzwqq.com","18888888888");
-        ObjectMapper objectMapper = new ObjectMapper();
-        String jsonString = objectMapper.writeValueAsString(user);
+        String jsonString = "{\"name\":\"wzw\",\"gender\":\"male\",\"age\":\"22\",\"email\":\"wzw@qq.com\",\"phone\":\"18888888888\"}";
         mockMvc.perform(post("/rs/user/add").content(jsonString)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());

@@ -67,10 +67,7 @@ class RsListApplicationTests {
     @Test
     @Order(4)
     void add_rs_event() throws Exception {
-        User user = new User("wzw", "male", 22, "wzw@qq.com", "18888888888");
-        RsEvent rsEvent = new RsEvent("猪肉涨价啦", "经济", user);
-        ObjectMapper objectMapper = new ObjectMapper();
-        String jsonString = objectMapper.writeValueAsString(rsEvent);
+        String jsonString = "{\"eventName\":\"猪肉涨价啦\",\"keyWords\":\"经济\",\"user\":{\"name\":\"wzw\",\"gender\":\"male\",\"age\":\"22\",\"email\":\"wzw@qq.com\",\"phone\":\"18888888888\"}}";
         mockMvc.perform(post("/rs/event").content(jsonString)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
