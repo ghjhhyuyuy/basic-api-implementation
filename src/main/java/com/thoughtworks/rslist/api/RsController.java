@@ -52,7 +52,7 @@ public class RsController {
     User user = rsEvent.getUser();
     userController.addUser(user);
     rsList.add(rsEvent);
-    return ResponseEntity.ok().build();
+    return ResponseEntity.created(null).header("index", String.valueOf(rsList.size() - 1)).build();
   }
 
   @RequestMapping(value = "/rs/update/{index}", method = RequestMethod.PATCH)

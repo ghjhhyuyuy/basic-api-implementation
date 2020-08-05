@@ -13,8 +13,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * Created by wzw on 2020/8/5.
@@ -32,7 +31,7 @@ class UserControllerTest {
         mockMvc.perform(post("/rs/user/add").content(jsonString)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.index",is("0")));
+                .andExpect(header().stringValues("index","0"));
     }
     @Test
     void should_return_400_when_name_too_long() throws Exception {
