@@ -1,11 +1,86 @@
 package com.thoughtworks.rslist.api;
 
-import org.springframework.web.bind.annotation.RestController;
+import com.thoughtworks.rslist.domain.RsEvent;
+import com.thoughtworks.rslist.domain.User;
+import com.thoughtworks.rslist.exception.InvalidIndexException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
+
 
 @RestController
 public class RsController {
-  private List<String> rsList = Arrays.asList("第一条事件", "第二条事件", "第三条事件");
+  @Autowired
+  private UserController userController;
+  private List<RsEvent> rsList = new ArrayList<>();
+
+  RsController() {
+    RsEvent rsEvent = new RsEvent("第一条事件", "无标签",new User("wzw","male",22,"wzw@qq.com","18888888888"));
+    RsEvent rsEvent1 = new RsEvent("第二条事件", "无标签",new User("wzw","male",22,"wzw@qq.com","18888888888"));
+    RsEvent rsEvent2 = new RsEvent("第三条事件", "无标签",new User("wzw","male",22,"wzw@qq.com","18888888888"));
+    rsList.add(rsEvent);
+    rsList.add(rsEvent1);
+    rsList.add(rsEvent2);
+  }
+
+  @GetMapping("/rs/list")
+  @ResponseBody
+  public ResponseEntity rsList() {
+    return ResponseEntity.ok(rsList);
+  }
+
+  @GetMapping("/rs/{index}")
+  @ResponseBody
+  public ResponseEntity rsListIndex(@PathVariable int index) throws InvalidIndexException {
+    if(index <= 0 || index >= rsList.size()){
+      throw new InvalidIndexException();
+    }
+    return ResponseEntity.ok(rsList.get(index - 1));
+  }
+
+  @GetMapping("/rs/listBetween")
+  @ResponseBody
+  public ResponseEntity rsListBetween(@RequestParam int start, @RequestParam int end) {
+    return ResponseEntity.ok(rsList.subList(start - 1, end));
+  }
+
+  @PostMapping("/rs/event")
+  public ResponseEntity rsEvent(@RequestBody RsEvent rsEvent) {
+    User user = rsEvent.getUser();
+    userController.addUser(user);
+    rsList.add(rsEvent);
+    return ResponseEntity.ok().build();
+  }
+
+  @RequestMapping(value = "/rs/update/{index}", method = RequestMethod.PATCH)
+  public ResponseEntity update(@PathVariable int index, @RequestParam(required = false) String eventName, @RequestParam(required = false) String keyWords) throws Exception {
+    RsEvent rsEvent = rsList.get(index - 1);
+    if (eventName == null && keyWords == null) {
+      throw new Exception("input error");
+    }
+    if (eventName != null && keyWords != null) {
+      rsEvent.setKeyWords(keyWords);
+      rsEvent.setEventName(eventName);
+    } else if (keyWords == null) {
+      rsEvent.setEventName(eventName);
+    } else {
+      rsEvent.setKeyWords(keyWords);
+    }
+    rsList.set(index - 1, rsEvent);
+    return ResponseEntity.ok().build();
+  }
+
+  @DeleteMapping("/rs/delete/{index}")
+  public ResponseEntity delete(@PathVariable int index) {
+    rsList.remove(index - 1);
+    return ResponseEntity.ok().build();
+  }
+
+  @ExceptionHandler(InvalidIndexException.class)
+  public ResponseEntity exceptionHandler(Exception e){
+    return ResponseEntity.badRequest().body(e.getMessage());
+  }
 }
