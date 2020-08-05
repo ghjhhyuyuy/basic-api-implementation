@@ -132,7 +132,7 @@ class RsListApplicationTests {
     @Test
     void should_return_400_and_message_when_index_out_of_range() throws Exception {
         mockMvc.perform(get("/rs/0"))
-                .andExpect(jsonPath("$.error", is("index out 0f range")))
+                .andExpect(jsonPath("$.error", is("invalid index")))
                 .andExpect(status().isBadRequest());
     }
 

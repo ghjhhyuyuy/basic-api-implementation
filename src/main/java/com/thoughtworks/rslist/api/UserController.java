@@ -17,7 +17,7 @@ import java.util.List;
 @RestController
 public class UserController {
     List<User> userList = new ArrayList<>();
-    @PostMapping("/rs/user/add")
+    @PostMapping("/user")
     public ResponseEntity addUser(@RequestBody @Valid User user){
         if(!userList.contains(user)){
             userList.add(user);

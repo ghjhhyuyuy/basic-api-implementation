@@ -39,7 +39,7 @@ public class RsController {
   @ResponseBody
   public ResponseEntity rsListIndex(@PathVariable int index) throws InvalidIndexException {
     if(index <= 0 || index > rsList.size()){
-      throw new InvalidIndexException("index out 0f range");
+      throw new InvalidIndexException("invalid index");
     }
     return ResponseEntity.ok(rsList.get(index - 1));
   }
