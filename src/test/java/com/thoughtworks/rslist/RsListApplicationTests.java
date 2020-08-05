@@ -1,8 +1,5 @@
 package com.thoughtworks.rslist;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.thoughtworks.rslist.domain.RsEvent;
-import com.thoughtworks.rslist.domain.User;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -71,7 +68,7 @@ class RsListApplicationTests {
         mockMvc.perform(post("/rs/event").content(jsonString)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
-                .andExpect(header().stringValues("index","3"));
+                .andExpect(header().stringValues("index", "3"));
         mockMvc.perform(get("/rs/list")).andExpect(jsonPath("$", hasSize(4)))
                 .andExpect(jsonPath("$[0].eventName", is("第一条事件")))
                 .andExpect(jsonPath("$[0].keyWords", is("无标签")))
@@ -135,13 +132,16 @@ class RsListApplicationTests {
     @Test
     void should_return_400_and_message_when_index_out_of_range() throws Exception {
         mockMvc.perform(get("/rs/0"))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message", is("index out 0f range")));
+                .andExpect(jsonPath("$.error", is("index out 0f range")))
+                .andExpect(status().isBadRequest());
     }
+
     @Test
     void should_return_400_and_message_when_not_pass_valid() throws Exception {
-        mockMvc.perform(get("/rs/0"))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message", is("valid error")));
+        String jsonString = "{\"eventName\":\"猪肉涨价啦\",\"keyWords\":\"经济\",\"user\":{\"name\":\"wzw\",\"gender\":\"male\",\"age\":\"22\",\"email\":\"wzw@qq.com\",\"phone\":\"28888888888\"}}";
+        mockMvc.perform(post("/rs/event").content(jsonString)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.error", is("invalid param")))
+                .andExpect(status().isBadRequest());
     }
 }
