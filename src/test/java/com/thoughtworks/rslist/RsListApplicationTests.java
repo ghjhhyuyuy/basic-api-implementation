@@ -144,4 +144,10 @@ class RsListApplicationTests {
                 .andExpect(jsonPath("$.error", is("invalid param")))
                 .andExpect(status().isBadRequest());
     }
+    @Test
+    void should_return_400_and_message_when_start_end_not_right() throws Exception {
+        mockMvc.perform(get("/rs/listBetween?start=0&end=2"))
+                .andExpect(jsonPath("$.error", is("invalid param")))
+                .andExpect(status().isBadRequest());
+    }
 }

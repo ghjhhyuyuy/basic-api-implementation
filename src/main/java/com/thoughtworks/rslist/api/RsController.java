@@ -46,7 +46,7 @@ public class RsController {
 
   @GetMapping("/rs/listBetween")
   @ResponseBody
-  public ResponseEntity rsListBetween(@RequestParam int start, @RequestParam int end) {
+  public ResponseEntity rsListBetween(@RequestParam int start, @RequestParam int end) throws InvalidIndexException {
     return ResponseEntity.ok(rsList.subList(start - 1, end));
   }
 
