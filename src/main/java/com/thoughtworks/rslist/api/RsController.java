@@ -85,16 +85,4 @@ public class RsController {
     return ResponseEntity.ok().build();
   }
 
-  @ExceptionHandler({InvalidIndexException.class, MethodArgumentNotValidException.class})
-  public ResponseEntity exceptionHandler(Exception e){
-    String errorMessage;
-    if(e instanceof InvalidIndexException){
-      errorMessage = e.getMessage();
-    }else {
-      errorMessage = "invalid param";
-    }
-    Error error = new Error();
-    error.setError(errorMessage);
-    return ResponseEntity.badRequest().body(error);
-  }
 }

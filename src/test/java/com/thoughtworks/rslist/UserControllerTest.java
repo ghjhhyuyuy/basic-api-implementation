@@ -31,7 +31,7 @@ class UserControllerTest {
         String jsonString = objectMapper.writeValueAsString(user);
         mockMvc.perform(post("/user").content(jsonString)
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
     }
 
     @Test
@@ -39,7 +39,7 @@ class UserControllerTest {
         User user = new User("wzwasdasdad", "male", 22, "wzw@qq.com", "18888888888");
         ObjectMapper objectMapper = new ObjectMapper();
         String jsonString = objectMapper.writeValueAsString(user);
-        mockMvc.perform(post("/rs/user/add").content(jsonString)
+        mockMvc.perform(post("/user").content(jsonString)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
@@ -49,7 +49,7 @@ class UserControllerTest {
         User user = new User("wzw", null, 22, "wzw@qq.com", "18888888888");
         ObjectMapper objectMapper = new ObjectMapper();
         String jsonString = objectMapper.writeValueAsString(user);
-        mockMvc.perform(post("/rs/user/add").content(jsonString)
+        mockMvc.perform(post("/user").content(jsonString)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
@@ -59,7 +59,7 @@ class UserControllerTest {
         User user = new User("wzw", "male", 15, "wzw@qq.com", "18888888888");
         ObjectMapper objectMapper = new ObjectMapper();
         String jsonString = objectMapper.writeValueAsString(user);
-        mockMvc.perform(post("/rs/user/add").content(jsonString)
+        mockMvc.perform(post("/user").content(jsonString)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
@@ -69,7 +69,7 @@ class UserControllerTest {
         User user = new User("wzw", "male", 101, "wzw@qq.com", "18888888888");
         ObjectMapper objectMapper = new ObjectMapper();
         String jsonString = objectMapper.writeValueAsString(user);
-        mockMvc.perform(post("/rs/user/add").content(jsonString)
+        mockMvc.perform(post("/user").content(jsonString)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
@@ -79,7 +79,7 @@ class UserControllerTest {
         User user = new User("wzw", "male", 22, "wzwqq.com", "18888888888");
         ObjectMapper objectMapper = new ObjectMapper();
         String jsonString = objectMapper.writeValueAsString(user);
-        mockMvc.perform(post("/rs/user/add").content(jsonString)
+        mockMvc.perform(post("/user").content(jsonString)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
@@ -89,7 +89,7 @@ class UserControllerTest {
         User user = new User("wzw", "male", 22, "wzw@qq.com", "188888888888");
         ObjectMapper objectMapper = new ObjectMapper();
         String jsonString = objectMapper.writeValueAsString(user);
-        mockMvc.perform(post("/rs/user/add").content(jsonString)
+        mockMvc.perform(post("/user").content(jsonString)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
@@ -99,7 +99,7 @@ class UserControllerTest {
         User user = new User("wzw", "male", 22, "wzw@qq.com", "28888888888");
         ObjectMapper objectMapper = new ObjectMapper();
         String jsonString = objectMapper.writeValueAsString(user);
-        mockMvc.perform(post("/rs/user/add").content(jsonString)
+        mockMvc.perform(post("/user").content(jsonString)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
@@ -112,14 +112,15 @@ class UserControllerTest {
                 .andExpect(jsonPath("$[0].age", is(22)))
                 .andExpect(jsonPath("$[0].email", is("wzw@qq.com")))
                 .andExpect(jsonPath("$[0].phone", is("18888888888")))
-                .andExpect(status().isCreated());
+                .andExpect(status().isOk());
     }
     @Test
-    void should_return_400_and_message_when_not_pass_valid() throws Exception {
+    void should_return_400_and_message_when_user_not_pass_valid() throws Exception {
         User user = new User("wzw", "male", 22, "wzw@qq.com", "28888888888");
         ObjectMapper objectMapper = new ObjectMapper();
         String jsonString = objectMapper.writeValueAsString(user);
-        mockMvc.perform(post("/user").content(jsonString))
+        mockMvc.perform(post("/user").content(jsonString)
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.error", is("invalid user")))
                 .andExpect(status().isBadRequest());
     }
