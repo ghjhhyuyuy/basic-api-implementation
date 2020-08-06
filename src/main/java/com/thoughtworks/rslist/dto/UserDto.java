@@ -1,5 +1,6 @@
 package com.thoughtworks.rslist.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,6 +23,7 @@ public class UserDto {
     @GeneratedValue
     private int id;
     @Column(name = "name")
+    @JsonProperty("name")
     private String userName;
     private String gender;
     private int age;

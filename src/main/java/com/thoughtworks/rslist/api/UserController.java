@@ -40,6 +40,10 @@ public class UserController {
     public ResponseEntity addUser(){
         return ResponseEntity.ok(userList);
     }
+    @GetMapping("/user/{index}")
+    public  ResponseEntity getUserByIndex(@PathVariable int index){
+        return ResponseEntity.ok(userRepository.findById(index));
+    }
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity exceptionHandler(Exception e){
         Error error = new Error();
