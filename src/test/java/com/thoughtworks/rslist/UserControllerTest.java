@@ -12,9 +12,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.hamcrest.Matchers.is;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.hamcrest.Matchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -139,6 +138,15 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.email", is("wzw@qq.com")))
                 .andExpect(jsonPath("$.phone", is("18888888888")))
                 .andExpect(jsonPath("$.voteNum", is(5)))
+                .andExpect(status().isOk());
+    }
+    @Test
+    @Order(3)
+    void should_delete_user_by_user_id() throws Exception {
+        mockMvc.perform(delete("/user/delete/1"))
+                .andExpect(status().isOk());
+        mockMvc.perform(get("/user/1"))
+                .andExpect(jsonPath("$", not(hasKey("name"))))
                 .andExpect(status().isOk());
     }
 }
