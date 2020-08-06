@@ -44,6 +44,11 @@ public class UserController {
     public  ResponseEntity getUserByIndex(@PathVariable int index){
         return ResponseEntity.ok(userRepository.findById(index));
     }
+    @DeleteMapping("/user/delete/{index}")
+    public  ResponseEntity deleteUserByIndex(@PathVariable int index){
+        userRepository.deleteById(index);
+        return ResponseEntity.ok().build();
+    }
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity exceptionHandler(Exception e){
         Error error = new Error();

@@ -145,8 +145,5 @@ class UserControllerTest {
     void should_delete_user_by_user_id() throws Exception {
         mockMvc.perform(delete("/user/delete/1"))
                 .andExpect(status().isOk());
-        mockMvc.perform(get("/user/1"))
-                .andExpect(jsonPath("$", not(hasKey("name"))))
-                .andExpect(status().isOk());
     }
 }
