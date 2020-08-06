@@ -96,9 +96,30 @@ class RsListApplicationTests {
                 .andExpect(jsonPath("$[3]", not(hasKey("user"))))
                 .andExpect(status().isOk());
     }
-
     @Test
     @Order(5)
+    void should_not_add_rs_event_user_not_exist() throws Exception {
+        String jsonString = "{\"eventName\":\"猪肉涨价啦\",\"keyWords\":\"经济\",\"userId\":100}";
+        mockMvc.perform(post("/rs/event").content(jsonString)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+        mockMvc.perform(get("/rs/list")).andExpect(jsonPath("$", hasSize(4)))
+                .andExpect(jsonPath("$[0].eventName", is("第一条事件")))
+                .andExpect(jsonPath("$[0].keyWords", is("无标签")))
+                .andExpect(jsonPath("$[0]", not(hasKey("user"))))
+                .andExpect(jsonPath("$[1].eventName", is("第二条事件")))
+                .andExpect(jsonPath("$[1].keyWords", is("无标签")))
+                .andExpect(jsonPath("$[1]", not(hasKey("user"))))
+                .andExpect(jsonPath("$[2].eventName", is("第三条事件")))
+                .andExpect(jsonPath("$[2].keyWords", is("无标签")))
+                .andExpect(jsonPath("$[2]", not(hasKey("user"))))
+                .andExpect(jsonPath("$[3].eventName", is("猪肉涨价啦")))
+                .andExpect(jsonPath("$[3].keyWords", is("经济")))
+                .andExpect(jsonPath("$[3]", not(hasKey("user"))))
+                .andExpect(status().isOk());
+    }
+    @Test
+    @Order(6)
     void update_rs_event() throws Exception {
         mockMvc.perform(patch("/rs/update/1?eventName=房价降啦")
                 .contentType(MediaType.APPLICATION_JSON))
@@ -124,7 +145,7 @@ class RsListApplicationTests {
     }
 
     @Test
-    @Order(6)
+    @Order(7)
     void delete_rs_event() throws Exception {
         mockMvc.perform(delete("/rs/delete/4"))
                 .andExpect(status().isOk());
