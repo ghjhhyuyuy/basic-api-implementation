@@ -124,4 +124,15 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.error", is("invalid user")))
                 .andExpect(status().isBadRequest());
     }
+    @Test
+    void should_return_user_message_by_user_id() throws Exception {
+        mockMvc.perform(get("/user/1"))
+                .andExpect(jsonPath("$.name", is("wzw")))
+                .andExpect(jsonPath("$.gender", is("male")))
+                .andExpect(jsonPath("$.age", is(22)))
+                .andExpect(jsonPath("$.email", is("wzw@qq.com")))
+                .andExpect(jsonPath("$.phone", is("18888888888")))
+                .andExpect(jsonPath("$.voteNum", is("5")))
+                .andExpect(status().isOk());
+    }
 }
