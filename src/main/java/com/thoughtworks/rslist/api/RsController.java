@@ -10,6 +10,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -84,5 +85,15 @@ public class RsController {
     rsList.remove(index - 1);
     return ResponseEntity.ok().build();
   }
-
+  private static void createTableByJdbc() throws SQLException {
+    Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/rsSystem","","");
+    DatabaseMetaData databaseMetaData = connection.getMetaData();
+    ResultSet resultSet = databaseMetaData.getTables(null,null,"rsEvent",null);
+    if(!resultSet.next()){
+      String createTableSql = "create table rsEvent(eventName varchar(200) not null keyword varchar(100) not null";
+      Statement statement = connection.createStatement();
+      statement.execute(createTableSql);
+    }
+    connection.close();
+  }
 }

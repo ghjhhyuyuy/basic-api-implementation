@@ -1,5 +1,9 @@
 package com.thoughtworks.rslist;
 
+import com.thoughtworks.rslist.dto.RsEventDto;
+import com.thoughtworks.rslist.dto.UserDto;
+import com.thoughtworks.rslist.repository.RsEventRepository;
+import com.thoughtworks.rslist.repository.UserRepository;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -10,7 +14,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.List;
+
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -20,6 +28,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class RsListApplicationTests {
     @Autowired
     private MockMvc mockMvc;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private RsEventRepository rsEventRepository;
 
     @Test
     @Order(1)
@@ -144,10 +156,27 @@ class RsListApplicationTests {
                 .andExpect(jsonPath("$.error", is("invalid param")))
                 .andExpect(status().isBadRequest());
     }
+
     @Test
     void should_return_400_and_message_when_start_end_not_right() throws Exception {
         mockMvc.perform(get("/rs/listBetween?start=0&end=2"))
                 .andExpect(jsonPath("$.error", is("invalid request param")))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void should_add_reEvent_when_user_exit() throws Exception {
+        UserDto save = userRepository.save(UserDto.builder().email("wzw@qq.com").gender("male")
+                .age(22).phone("18888888888").userName("wzw").voteNum(10).build());
+        String jsonString = "{\"eventName\":\"猪肉涨价啦\",\"keyWords\":\"经济\",\"userId\":" + save.getId() + "}";
+        mockMvc.perform(post("/rs/event").content(jsonString)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated());
+        List<RsEventDto> all = rsEventRepository.findAll();
+        assertNotNull(all);
+        assertEquals(1,all.size());
+        assertEquals("猪肉涨价啦",all.get(0).getEventName());
+        assertEquals("经济",all.get(0).getKeyWord());
+        assertEquals(save.getId(),all.get(0).getId());
     }
 }
