@@ -2,10 +2,13 @@ package com.thoughtworks.rslist.api;
 
 import com.thoughtworks.rslist.componet.RsEventExceptionHandler;
 import com.thoughtworks.rslist.domain.User;
+import com.thoughtworks.rslist.dto.UserDto;
 import com.thoughtworks.rslist.exception.Error;
 import com.thoughtworks.rslist.exception.InvalidIndexException;
+import com.thoughtworks.rslist.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
@@ -21,10 +24,15 @@ import java.util.List;
 public class UserController {
     Logger logger = LoggerFactory.getLogger(UserController.class);
     List<User> userList = new ArrayList<>();
+    @Autowired
+    private UserRepository userRepository;
     @PostMapping("/user")
     public ResponseEntity addUser(@RequestBody @Valid User user){
-        if(!userList.contains(user)){
-            userList.add(user);
+        List<UserDto> userDtoList = userRepository.findAll();
+        UserDto userDto = UserDto.builder().email(user.getEmail()).gender(user.getGender())
+                .age(user.getAge()).phone(user.getPhone()).userName(user.getName()).voteNum(user.getVoteNum()).build();
+        if(!userDtoList.contains(userDto)){
+            userRepository.save(userDto);
         }
         return ResponseEntity.created(null).header("index", String.valueOf(userList.size() - 1)).build();
     }

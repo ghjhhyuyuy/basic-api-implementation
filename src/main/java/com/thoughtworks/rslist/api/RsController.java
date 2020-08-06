@@ -22,9 +22,9 @@ public class RsController {
   private List<RsEvent> rsList = new ArrayList<>();
 
   RsController() {
-    RsEvent rsEvent = new RsEvent("第一条事件", "无标签",new User("wzw","male",22,"wzw@qq.com","18888888888"));
-    RsEvent rsEvent1 = new RsEvent("第二条事件", "无标签",new User("wzw","male",22,"wzw@qq.com","18888888888"));
-    RsEvent rsEvent2 = new RsEvent("第三条事件", "无标签",new User("wzw","male",22,"wzw@qq.com","18888888888"));
+    RsEvent rsEvent = new RsEvent("第一条事件", "无标签",new User("wzw","male",22,"wzw@qq.com","18888888888",5));
+    RsEvent rsEvent1 = new RsEvent("第二条事件", "无标签",new User("wzw","male",22,"wzw@qq.com","18888888888",5));
+    RsEvent rsEvent2 = new RsEvent("第三条事件", "无标签",new User("wzw","male",22,"wzw@qq.com","18888888888",5));
     rsList.add(rsEvent);
     rsList.add(rsEvent1);
     rsList.add(rsEvent2);

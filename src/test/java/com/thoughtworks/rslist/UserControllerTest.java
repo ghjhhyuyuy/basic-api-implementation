@@ -26,7 +26,7 @@ class UserControllerTest {
 
     @Test
     void should_add_user() throws Exception {
-        User user = new User("wzw", "male", 22, "wzw@qq.com", "18888888888");
+        User user = new User("wzw", "male", 22, "wzw@qq.com", "18888888888",5);
         ObjectMapper objectMapper = new ObjectMapper();
         String jsonString = objectMapper.writeValueAsString(user);
         mockMvc.perform(post("/user").content(jsonString)
@@ -36,7 +36,7 @@ class UserControllerTest {
 
     @Test
     void should_return_400_when_name_too_long() throws Exception {
-        User user = new User("wzwasdasdad", "male", 22, "wzw@qq.com", "18888888888");
+        User user = new User("wzwasdasdad", "male", 22, "wzw@qq.com", "18888888888",5);
         ObjectMapper objectMapper = new ObjectMapper();
         String jsonString = objectMapper.writeValueAsString(user);
         mockMvc.perform(post("/user").content(jsonString)
@@ -46,7 +46,7 @@ class UserControllerTest {
 
     @Test
     void should_return_400_when_gender_is_null() throws Exception {
-        User user = new User("wzw", null, 22, "wzw@qq.com", "18888888888");
+        User user = new User("wzw", null, 22, "wzw@qq.com", "18888888888",5);
         ObjectMapper objectMapper = new ObjectMapper();
         String jsonString = objectMapper.writeValueAsString(user);
         mockMvc.perform(post("/user").content(jsonString)
@@ -56,7 +56,7 @@ class UserControllerTest {
 
     @Test
     void should_return_400_when_age_less_than_18() throws Exception {
-        User user = new User("wzw", "male", 15, "wzw@qq.com", "18888888888");
+        User user = new User("wzw", "male", 15, "wzw@qq.com", "18888888888",5);
         ObjectMapper objectMapper = new ObjectMapper();
         String jsonString = objectMapper.writeValueAsString(user);
         mockMvc.perform(post("/user").content(jsonString)
@@ -66,7 +66,7 @@ class UserControllerTest {
 
     @Test
     void should_return_400_when_age_more_than_100() throws Exception {
-        User user = new User("wzw", "male", 101, "wzw@qq.com", "18888888888");
+        User user = new User("wzw", "male", 101, "wzw@qq.com", "18888888888",5);
         ObjectMapper objectMapper = new ObjectMapper();
         String jsonString = objectMapper.writeValueAsString(user);
         mockMvc.perform(post("/user").content(jsonString)
@@ -76,7 +76,7 @@ class UserControllerTest {
 
     @Test
     void should_return_400_when_email_is_wrong() throws Exception {
-        User user = new User("wzw", "male", 22, "wzwqq.com", "18888888888");
+        User user = new User("wzw", "male", 22, "wzwqq.com", "18888888888",5);
         ObjectMapper objectMapper = new ObjectMapper();
         String jsonString = objectMapper.writeValueAsString(user);
         mockMvc.perform(post("/user").content(jsonString)
@@ -86,7 +86,7 @@ class UserControllerTest {
 
     @Test
     void should_return_400_when_phone_too_long() throws Exception {
-        User user = new User("wzw", "male", 22, "wzw@qq.com", "188888888888");
+        User user = new User("wzw", "male", 22, "wzw@qq.com", "188888888888",5);
         ObjectMapper objectMapper = new ObjectMapper();
         String jsonString = objectMapper.writeValueAsString(user);
         mockMvc.perform(post("/user").content(jsonString)
@@ -96,7 +96,7 @@ class UserControllerTest {
 
     @Test
     void should_return_400_when_phone_not_begin_with_1() throws Exception {
-        User user = new User("wzw", "male", 22, "wzw@qq.com", "28888888888");
+        User user = new User("wzw", "male", 22, "wzw@qq.com", "28888888888",5);
         ObjectMapper objectMapper = new ObjectMapper();
         String jsonString = objectMapper.writeValueAsString(user);
         mockMvc.perform(post("/user").content(jsonString)
@@ -116,7 +116,7 @@ class UserControllerTest {
     }
     @Test
     void should_return_400_and_message_when_user_not_pass_valid() throws Exception {
-        User user = new User("wzw", "male", 22, "wzw@qq.com", "28888888888");
+        User user = new User("wzw", "male", 22, "wzw@qq.com", "28888888888",5);
         ObjectMapper objectMapper = new ObjectMapper();
         String jsonString = objectMapper.writeValueAsString(user);
         mockMvc.perform(post("/user").content(jsonString)
