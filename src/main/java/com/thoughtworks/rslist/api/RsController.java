@@ -2,8 +2,12 @@ package com.thoughtworks.rslist.api;
 
 import com.thoughtworks.rslist.domain.RsEvent;
 import com.thoughtworks.rslist.domain.User;
+import com.thoughtworks.rslist.dto.RsEventDto;
+import com.thoughtworks.rslist.dto.UserDto;
 import com.thoughtworks.rslist.exception.Error;
 import com.thoughtworks.rslist.exception.InvalidIndexException;
+import com.thoughtworks.rslist.repository.RsEventRepository;
+import com.thoughtworks.rslist.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -13,18 +17,23 @@ import javax.validation.Valid;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 
 @RestController
 public class RsController {
   @Autowired
   private UserController userController;
+  @Autowired
+  private UserRepository userRepository;
+  @Autowired
+  private RsEventRepository rsEventRepository;
   private List<RsEvent> rsList = new ArrayList<>();
 
   RsController() {
-    RsEvent rsEvent = new RsEvent("第一条事件", "无标签",new User("wzw","male",22,"wzw@qq.com","18888888888",5));
-    RsEvent rsEvent1 = new RsEvent("第二条事件", "无标签",new User("wzw","male",22,"wzw@qq.com","18888888888",5));
-    RsEvent rsEvent2 = new RsEvent("第三条事件", "无标签",new User("wzw","male",22,"wzw@qq.com","18888888888",5));
+    RsEvent rsEvent = new RsEvent("第一条事件", "无标签",1);
+    RsEvent rsEvent1 = new RsEvent("第二条事件", "无标签",1);
+    RsEvent rsEvent2 = new RsEvent("第三条事件", "无标签",1);
     rsList.add(rsEvent);
     rsList.add(rsEvent1);
     rsList.add(rsEvent2);
@@ -56,10 +65,14 @@ public class RsController {
 
   @PostMapping("/rs/event")
   public ResponseEntity rsEvent(@RequestBody @Valid RsEvent rsEvent) {
-    User user = rsEvent.getUser();
-    userController.addUser(user);
-    rsList.add(rsEvent);
-    return ResponseEntity.created(null).header("index", String.valueOf(rsList.size() - 1)).build();
+    int userId = rsEvent.getUserId();
+    Optional<UserDto> optionalUserDto = userRepository.findById(userId);
+    if(optionalUserDto.isPresent()){
+      RsEventDto rsEventDto = RsEventDto.builder().eventName(rsEvent.getEventName()).keyWord(rsEvent.getKeyWords()).userDto(optionalUserDto.get()).build();
+      rsEventRepository.save(rsEventDto);
+      return ResponseEntity.created(null).build();
+    }
+    return ResponseEntity.badRequest().build();
   }
 
   @RequestMapping(value = "/rs/update/{index}", method = RequestMethod.PATCH)

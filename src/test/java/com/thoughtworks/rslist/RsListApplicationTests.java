@@ -17,8 +17,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.List;
 
 import static org.hamcrest.Matchers.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -73,51 +72,6 @@ class RsListApplicationTests {
                 .andExpect(status().isOk());
     }
 
-    @Test
-    @Order(4)
-    void add_rs_event_user_exist() throws Exception {
-        String jsonString = "{\"eventName\":\"猪肉涨价啦\",\"keyWords\":\"经济\",\"userId\":1}";
-        mockMvc.perform(post("/rs/event").content(jsonString)
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated())
-                .andExpect(header().stringValues("index", "3"));
-        mockMvc.perform(get("/rs/list")).andExpect(jsonPath("$", hasSize(4)))
-                .andExpect(jsonPath("$[0].eventName", is("第一条事件")))
-                .andExpect(jsonPath("$[0].keyWords", is("无标签")))
-                .andExpect(jsonPath("$[0]", not(hasKey("user"))))
-                .andExpect(jsonPath("$[1].eventName", is("第二条事件")))
-                .andExpect(jsonPath("$[1].keyWords", is("无标签")))
-                .andExpect(jsonPath("$[1]", not(hasKey("user"))))
-                .andExpect(jsonPath("$[2].eventName", is("第三条事件")))
-                .andExpect(jsonPath("$[2].keyWords", is("无标签")))
-                .andExpect(jsonPath("$[2]", not(hasKey("user"))))
-                .andExpect(jsonPath("$[3].eventName", is("猪肉涨价啦")))
-                .andExpect(jsonPath("$[3].keyWords", is("经济")))
-                .andExpect(jsonPath("$[3]", not(hasKey("user"))))
-                .andExpect(status().isOk());
-    }
-    @Test
-    @Order(5)
-    void should_not_add_rs_event_user_not_exist() throws Exception {
-        String jsonString = "{\"eventName\":\"猪肉涨价啦\",\"keyWords\":\"经济\",\"userId\":100}";
-        mockMvc.perform(post("/rs/event").content(jsonString)
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
-        mockMvc.perform(get("/rs/list")).andExpect(jsonPath("$", hasSize(4)))
-                .andExpect(jsonPath("$[0].eventName", is("第一条事件")))
-                .andExpect(jsonPath("$[0].keyWords", is("无标签")))
-                .andExpect(jsonPath("$[0]", not(hasKey("user"))))
-                .andExpect(jsonPath("$[1].eventName", is("第二条事件")))
-                .andExpect(jsonPath("$[1].keyWords", is("无标签")))
-                .andExpect(jsonPath("$[1]", not(hasKey("user"))))
-                .andExpect(jsonPath("$[2].eventName", is("第三条事件")))
-                .andExpect(jsonPath("$[2].keyWords", is("无标签")))
-                .andExpect(jsonPath("$[2]", not(hasKey("user"))))
-                .andExpect(jsonPath("$[3].eventName", is("猪肉涨价啦")))
-                .andExpect(jsonPath("$[3].keyWords", is("经济")))
-                .andExpect(jsonPath("$[3]", not(hasKey("user"))))
-                .andExpect(status().isOk());
-    }
     @Test
     @Order(6)
     void update_rs_event() throws Exception {
@@ -186,6 +140,7 @@ class RsListApplicationTests {
     }
 
     @Test
+    @Order(4)
     void should_add_reEvent_when_user_exit() throws Exception {
         UserDto save = userRepository.save(UserDto.builder().email("wzw@qq.com").gender("male")
                 .age(22).phone("18888888888").userName("wzw").voteNum(10).build());
@@ -195,9 +150,20 @@ class RsListApplicationTests {
                 .andExpect(status().isCreated());
         List<RsEventDto> all = rsEventRepository.findAll();
         assertNotNull(all);
-        assertEquals(1,all.size());
+        assertEquals(2,all.size());
         assertEquals("猪肉涨价啦",all.get(0).getEventName());
         assertEquals("经济",all.get(0).getKeyWord());
         assertEquals(save.getId(),all.get(0).getId());
+    }
+    @Test
+    void should_not_add_rs_event_user_not_exist() throws Exception {
+        UserDto save = userRepository.save(UserDto.builder().email("wzw@qq.com").gender("male")
+                .age(22).phone("18888888888").userName("wzw").voteNum(10).build());
+        String jsonString = "{\"eventName\":\"猪肉涨价啦\",\"keyWords\":\"经济\",\"userId\":100}";
+        mockMvc.perform(post("/rs/event").content(jsonString)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+        List<RsEventDto> all = rsEventRepository.findAll();
+        assertEquals(true,all.isEmpty());
     }
 }
