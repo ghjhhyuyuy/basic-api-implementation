@@ -1,5 +1,6 @@
 package com.thoughtworks.rslist.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,5 +24,6 @@ public class RsEventDto {
     private String eventName;
     private String keyWord;
     @ManyToOne
+    @JsonIgnore
     private UserDto userDto;
 }

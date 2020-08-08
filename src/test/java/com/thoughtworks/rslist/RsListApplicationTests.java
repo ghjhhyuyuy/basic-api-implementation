@@ -4,10 +4,7 @@ import com.thoughtworks.rslist.dto.RsEventDto;
 import com.thoughtworks.rslist.dto.UserDto;
 import com.thoughtworks.rslist.repository.RsEventRepository;
 import com.thoughtworks.rslist.repository.UserRepository;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -31,7 +28,17 @@ class RsListApplicationTests {
     private UserRepository userRepository;
     @Autowired
     private RsEventRepository rsEventRepository;
-
+    UserDto userDto;
+    RsEventDto rsEventDto;
+    @BeforeEach
+    void setUp() {
+        userDto = UserDto.builder().email("wzw@qq.com").gender("male")
+                .age(22).phone("18888888888").userName("wzw").voteNum(10).build();
+        userDto = userRepository.save(userDto);
+        rsEventDto = RsEventDto.builder().keyWord("经济").eventName("大爆炸").userDto(userDto).build();
+        rsEventDto = rsEventRepository.save(rsEventDto);
+        //RsEventDto.builder().eventName()
+    }
     @Test
     @Order(1)
     void get_rs_event_list() throws Exception {
@@ -75,26 +82,26 @@ class RsListApplicationTests {
     @Test
     @Order(6)
     void update_rs_event() throws Exception {
-        mockMvc.perform(patch("/rs/update/1?eventName=房价降啦")
+        mockMvc.perform(patch("/rs/2?eventName=房价降啦&userId=1")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
-        mockMvc.perform(get("/rs/1"))
+        mockMvc.perform(get("/rs/2"))
                 .andExpect(jsonPath("$.eventName", is("房价降啦")))
-                .andExpect(jsonPath("$.keyWords", is("无标签")))
+                .andExpect(jsonPath("$.keyWord", is("经济")))
                 .andExpect(status().isOk());
-        mockMvc.perform(patch("/rs/update/1?keyWords=经济")
+        mockMvc.perform(patch("/rs/2?keyWords=战争&userId=1")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
-        mockMvc.perform(get("/rs/1"))
+        mockMvc.perform(get("/rs/2"))
                 .andExpect(jsonPath("$.eventName", is("房价降啦")))
-                .andExpect(jsonPath("$.keyWords", is("经济")))
+                .andExpect(jsonPath("$.keyWord", is("战争")))
                 .andExpect(status().isOk());
-        mockMvc.perform(patch("/rs/update/1?eventName=第一条事件&keyWords=无标签")
+        mockMvc.perform(patch("/rs/2?eventName=第一条事件&keyWords=无标签&userId=1")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
-        mockMvc.perform(get("/rs/1"))
+        mockMvc.perform(get("/rs/2"))
                 .andExpect(jsonPath("$.eventName", is("第一条事件")))
-                .andExpect(jsonPath("$.keyWords", is("无标签")))
+                .andExpect(jsonPath("$.keyWord", is("无标签")))
                 .andExpect(status().isOk());
     }
 
@@ -105,13 +112,13 @@ class RsListApplicationTests {
                 .andExpect(status().isOk());
         mockMvc.perform(get("/rs/list")).andExpect(jsonPath("$", hasSize(3)))
                 .andExpect(jsonPath("$[0].eventName", is("第一条事件")))
-                .andExpect(jsonPath("$[0].keyWords", is("无标签")))
+                .andExpect(jsonPath("$[0].keyWord", is("无标签")))
                 .andExpect(jsonPath("$[0]", not(hasKey("user"))))
                 .andExpect(jsonPath("$[1].eventName", is("第二条事件")))
-                .andExpect(jsonPath("$[1].keyWords", is("无标签")))
+                .andExpect(jsonPath("$[1].keyWord", is("无标签")))
                 .andExpect(jsonPath("$[1]", not(hasKey("user"))))
                 .andExpect(jsonPath("$[2].eventName", is("第三条事件")))
-                .andExpect(jsonPath("$[2].keyWords", is("无标签")))
+                .andExpect(jsonPath("$[2].keyWord", is("无标签")))
                 .andExpect(jsonPath("$[2]", not(hasKey("user"))))
                 .andExpect(status().isOk());
     }
@@ -165,5 +172,10 @@ class RsListApplicationTests {
                 .andExpect(status().isBadRequest());
         List<RsEventDto> all = rsEventRepository.findAll();
         assertEquals(true,all.isEmpty());
+    }
+    @AfterEach
+    void tearDown() {
+        rsEventRepository.deleteAll();
+        userRepository.deleteAll();
     }
 }

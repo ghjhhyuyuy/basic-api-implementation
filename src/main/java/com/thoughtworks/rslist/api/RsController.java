@@ -48,10 +48,7 @@ public class RsController {
   @GetMapping("/rs/{index}")
   @ResponseBody
   public ResponseEntity rsListIndex(@PathVariable int index) throws InvalidIndexException {
-    if(index <= 0 || index > rsList.size()){
-      throw new InvalidIndexException("invalid index");
-    }
-    return ResponseEntity.ok(rsList.get(index - 1));
+    return ResponseEntity.ok(rsEventRepository.findById(index));
   }
 
   @GetMapping("/rs/listBetween")
@@ -75,22 +72,31 @@ public class RsController {
     return ResponseEntity.badRequest().build();
   }
 
-  @RequestMapping(value = "/rs/update/{index}", method = RequestMethod.PATCH)
-  public ResponseEntity update(@PathVariable int index, @RequestParam(required = false) String eventName, @RequestParam(required = false) String keyWords) throws Exception {
-    RsEvent rsEvent = rsList.get(index - 1);
-    if (eventName == null && keyWords == null) {
-      throw new Exception("input error");
+  @PatchMapping(value = "/rs/{rsEventId}")
+  public ResponseEntity update(@PathVariable int rsEventId, @RequestParam(required = false) String eventName, @RequestParam(required = false) String keyWords,@RequestParam int userId) throws Exception {
+    Optional<RsEventDto> rsEventDtoOptional = rsEventRepository.findById(rsEventId);
+    RsEventDto rsEventDto = new RsEventDto();
+    if(rsEventDtoOptional.isPresent()){
+      rsEventDto = rsEventDtoOptional.get();
+    }else {
+      return ResponseEntity.badRequest().build();
     }
-    if (eventName != null && keyWords != null) {
-      rsEvent.setKeyWords(keyWords);
-      rsEvent.setEventName(eventName);
-    } else if (keyWords == null) {
-      rsEvent.setEventName(eventName);
-    } else {
-      rsEvent.setKeyWords(keyWords);
+    if(rsEventDto.getUserDto().getId() == userId){
+      if (eventName == null && keyWords == null) {
+        throw new Exception("input error");
+      }
+      if (eventName != null && keyWords != null) {
+        rsEventDto.setKeyWord(keyWords);
+        rsEventDto.setEventName(eventName);
+      } else if (keyWords == null) {
+        rsEventDto.setEventName(eventName);
+      } else {
+        rsEventDto.setKeyWord(keyWords);
+      }
+      rsEventRepository.save(rsEventDto);
+      return ResponseEntity.ok().build();
     }
-    rsList.set(index - 1, rsEvent);
-    return ResponseEntity.ok().build();
+    return ResponseEntity.badRequest().build();
   }
 
   @DeleteMapping("/rs/delete/{index}")
