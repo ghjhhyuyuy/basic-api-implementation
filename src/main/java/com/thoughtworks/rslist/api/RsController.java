@@ -55,6 +55,7 @@ public class RsController {
   @GetMapping("/rs/listBetween")
   @ResponseBody
   public ResponseEntity rsListBetween(@RequestParam int start, @RequestParam int end) throws InvalidIndexException {
+    List<RsEventDto> rsList = rsEventRepository.findAll();
     if(start <=0 || end > rsList.size() || start > end){
       throw new InvalidIndexException("invalid request param");
     }

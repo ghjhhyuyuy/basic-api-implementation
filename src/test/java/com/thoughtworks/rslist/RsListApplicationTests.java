@@ -64,7 +64,7 @@ class RsListApplicationTests {
         mockMvc.perform(get("/rs/listBetween?start=1&end=1"))
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].eventName", is("大爆炸")))
-                .andExpect(jsonPath("$[0].keyWords", is("经济")))
+                .andExpect(jsonPath("$[0].keyWord", is("经济")))
                 .andExpect(jsonPath("$[0]", not(hasKey("user"))))
                 .andExpect(status().isOk());
     }
@@ -98,18 +98,12 @@ class RsListApplicationTests {
     @Test
     @Order(7)
     void delete_rs_event() throws Exception {
-        mockMvc.perform(delete("/rs/delete/4"))
+        mockMvc.perform(delete("/rs/delete/2"))
                 .andExpect(status().isOk());
-        mockMvc.perform(get("/rs/list")).andExpect(jsonPath("$", hasSize(3)))
+        mockMvc.perform(get("/rs/list")).andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].eventName", is("第一条事件")))
                 .andExpect(jsonPath("$[0].keyWord", is("无标签")))
                 .andExpect(jsonPath("$[0]", not(hasKey("user"))))
-                .andExpect(jsonPath("$[1].eventName", is("第二条事件")))
-                .andExpect(jsonPath("$[1].keyWord", is("无标签")))
-                .andExpect(jsonPath("$[1]", not(hasKey("user"))))
-                .andExpect(jsonPath("$[2].eventName", is("第三条事件")))
-                .andExpect(jsonPath("$[2].keyWord", is("无标签")))
-                .andExpect(jsonPath("$[2]", not(hasKey("user"))))
                 .andExpect(status().isOk());
     }
 
@@ -153,6 +147,7 @@ class RsListApplicationTests {
         assertEquals(save.getId(),all.get(0).getId());
     }
     @Test
+    @Order(5)
     void should_not_add_rs_event_user_not_exist() throws Exception {
         UserDto save = userRepository.save(UserDto.builder().email("wzw@qq.com").gender("male")
                 .age(22).phone("18888888888").userName("wzw").voteNum(10).build());
