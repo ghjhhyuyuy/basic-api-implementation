@@ -42,6 +42,7 @@ public class RsController {
   @GetMapping("/rs/list")
   @ResponseBody
   public ResponseEntity rsList() {
+    List<RsEventDto> rsList = rsEventRepository.findAll();
     return ResponseEntity.ok(rsList);
   }
 

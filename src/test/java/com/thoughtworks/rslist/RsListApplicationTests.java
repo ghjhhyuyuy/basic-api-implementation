@@ -43,18 +43,17 @@ class RsListApplicationTests {
     void get_rs_event_list() throws Exception {
         mockMvc.perform(get("/rs/list")).andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].eventName", is("大爆炸")))
-                .andExpect(jsonPath("$[0].keyWords", is("经济")))
+                .andExpect(jsonPath("$[0].keyWord", is("经济")))
                 .andExpect(jsonPath("$[0]", not(hasKey("user"))))
-                .andExpect(jsonPath("$[0].userId", is("1")))
                 .andExpect(status().isOk());
     }
 
     @Test
     @Order(2)
     void get_rs_event_number() throws Exception {
-        mockMvc.perform(get("/rs/1"))
-                .andExpect(jsonPath("$.eventName", is("第一条事件")))
-                .andExpect(jsonPath("$.keyWords", is("无标签")))
+        mockMvc.perform(get("/rs/2"))
+                .andExpect(jsonPath("$.eventName", is("大爆炸")))
+                .andExpect(jsonPath("$.keyWord", is("经济")))
                 .andExpect(jsonPath("$", not(hasKey("user"))))
                 .andExpect(status().isOk());
     }
