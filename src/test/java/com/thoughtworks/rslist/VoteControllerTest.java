@@ -1,17 +1,26 @@
 package com.thoughtworks.rslist;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sun.jmx.snmp.Timestamp;
+import com.thoughtworks.rslist.domain.Vote;
 import com.thoughtworks.rslist.dto.RsEventDto;
 import com.thoughtworks.rslist.dto.UserDto;
 import com.thoughtworks.rslist.repository.RsEventRepository;
 import com.thoughtworks.rslist.repository.UserRepository;
+import com.thoughtworks.rslist.repository.VoteRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.junit.jupiter.api.Assertions.*;
+
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * Created by wzw on 2020/8/6.
@@ -25,8 +34,8 @@ class VoteControllerTest {
     UserRepository userRepository;
     @Autowired
     RsEventRepository rsEventRepository;
-//    @Autowired
-//    VoteRepository voteRepository;
+    @Autowired
+    VoteRepository voteRepository;
     UserDto userDto;
     RsEventDto rsEventDto;
 
@@ -36,6 +45,15 @@ class VoteControllerTest {
                 .age(22).phone("18888888888").userName("wzw").voteNum(10).build();
         userDto = userRepository.save(userDto);
         //RsEventDto.builder().eventName()
+    }
+    @Test
+    void should_add_vote_information() throws Exception {
+        Vote vote = new Vote(2,new Timestamp(System.currentTimeMillis()),1,1);
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonString = objectMapper.writeValueAsString(vote);
+        mockMvc.perform(post("/rs/vote/2").content(jsonString)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated());
     }
 
     @AfterEach
