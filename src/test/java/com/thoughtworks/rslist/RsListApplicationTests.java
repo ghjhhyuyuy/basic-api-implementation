@@ -61,14 +61,11 @@ class RsListApplicationTests {
     @Test
     @Order(3)
     void get_rs_event_between() throws Exception {
-        mockMvc.perform(get("/rs/listBetween?start=1&end=2"))
-                .andExpect(jsonPath("$", hasSize(2)))
-                .andExpect(jsonPath("$[0].eventName", is("第一条事件")))
-                .andExpect(jsonPath("$[0].keyWords", is("无标签")))
+        mockMvc.perform(get("/rs/listBetween?start=1&end=1"))
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].eventName", is("大爆炸")))
+                .andExpect(jsonPath("$[0].keyWords", is("经济")))
                 .andExpect(jsonPath("$[0]", not(hasKey("user"))))
-                .andExpect(jsonPath("$[1].eventName", is("第二条事件")))
-                .andExpect(jsonPath("$[1].keyWords", is("无标签")))
-                .andExpect(jsonPath("$[1]", not(hasKey("user"))))
                 .andExpect(status().isOk());
     }
 
