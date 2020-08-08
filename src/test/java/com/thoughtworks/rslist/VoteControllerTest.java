@@ -1,7 +1,6 @@
 package com.thoughtworks.rslist;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sun.jmx.snmp.Timestamp;
 import com.thoughtworks.rslist.domain.Vote;
 import com.thoughtworks.rslist.dto.RsEventDto;
 import com.thoughtworks.rslist.dto.UserDto;
@@ -18,6 +17,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 
+import java.sql.Timestamp;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -44,7 +44,8 @@ class VoteControllerTest {
         userDto = UserDto.builder().email("wzw@qq.com").gender("male")
                 .age(22).phone("18888888888").userName("wzw").voteNum(10).build();
         userDto = userRepository.save(userDto);
-        //RsEventDto.builder().eventName()
+        rsEventDto = RsEventDto.builder().keyWord("经济").eventName("大爆炸").userDto(userDto).build();
+        rsEventDto = rsEventRepository.save(rsEventDto);
     }
     @Test
     void should_add_vote_information() throws Exception {
@@ -58,5 +59,8 @@ class VoteControllerTest {
 
     @AfterEach
     void tearDown() {
+        voteRepository.deleteAll();
+        rsEventRepository.deleteAll();
+        userRepository.deleteAll();
     }
 }

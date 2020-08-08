@@ -37,7 +37,6 @@ class RsListApplicationTests {
         userDto = userRepository.save(userDto);
         rsEventDto = RsEventDto.builder().keyWord("经济").eventName("大爆炸").userDto(userDto).build();
         rsEventDto = rsEventRepository.save(rsEventDto);
-        //RsEventDto.builder().eventName()
     }
     @Test
     @Order(1)

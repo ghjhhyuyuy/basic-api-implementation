@@ -1,8 +1,8 @@
 package com.thoughtworks.rslist.domain;
 
-import com.sun.jmx.snmp.Timestamp;
 import lombok.Data;
 
+import java.sql.Timestamp;
 
 
 /**

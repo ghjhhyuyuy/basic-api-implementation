@@ -40,7 +40,7 @@ class UserControllerTest {
                 .age(22).phone("18888888888").userName("wzw").voteNum(10).build();
         userDto = userRepository.save(userDto);
         rsEventDto = RsEventDto.builder().keyWord("经济").eventName("大爆炸").userDto(userDto).build();
-        //RsEventDto.builder().eventName()
+        rsEventDto = rsEventRepository.save(rsEventDto);
     }
 
     @Test

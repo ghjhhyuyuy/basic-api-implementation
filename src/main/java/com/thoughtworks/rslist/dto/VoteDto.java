@@ -22,7 +22,6 @@ public class VoteDto {
     @Id
     @GeneratedValue
     private int id;
-    int rsEventId;
     Timestamp voteTime;
     int voteNum;
     @ManyToOne
