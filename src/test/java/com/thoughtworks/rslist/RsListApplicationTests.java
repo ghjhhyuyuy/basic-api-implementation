@@ -15,9 +15,11 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.List;
 
 import static org.hamcrest.Matchers.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -33,6 +35,7 @@ class RsListApplicationTests {
     VoteRepository voteRepository;
     UserDto userDto;
     RsEventDto rsEventDto;
+
     @BeforeEach
     void setUp() {
         userDto = UserDto.builder().email("wzw@qq.com").gender("male")
@@ -41,6 +44,7 @@ class RsListApplicationTests {
         rsEventDto = RsEventDto.builder().keyWord("经济").eventName("大爆炸").userDto(userDto).id(1).build();
         rsEventDto = rsEventRepository.save(rsEventDto);
     }
+
     @Test
     @Order(1)
     void get_rs_event_list() throws Exception {
@@ -71,6 +75,7 @@ class RsListApplicationTests {
                 .andExpect(jsonPath("$[0]", not(hasKey("user"))))
                 .andExpect(status().isOk());
     }
+
     @Test
     @Order(4)
     void should_add_reEvent_when_user_exit() throws Exception {
@@ -82,11 +87,12 @@ class RsListApplicationTests {
                 .andExpect(status().isCreated());
         List<RsEventDto> all = rsEventRepository.findAll();
         assertNotNull(all);
-        assertEquals(2,all.size());
-        assertEquals("猪肉涨价啦",all.get(1).getEventName());
-        assertEquals("经济",all.get(1).getKeyWord());
-        assertEquals(save.getId(),all.get(1).getId());
+        assertEquals(2, all.size());
+        assertEquals("猪肉涨价啦", all.get(1).getEventName());
+        assertEquals("经济", all.get(1).getKeyWord());
+        assertEquals(save.getId(), all.get(1).getId());
     }
+
     @Test
     @Order(5)
     void should_not_add_rs_event_user_not_exist() throws Exception {
@@ -97,8 +103,9 @@ class RsListApplicationTests {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
         List<RsEventDto> all = rsEventRepository.findAll();
-        assertEquals(1,all.size());
+        assertEquals(1, all.size());
     }
+
     @Test
     @Order(6)
     void update_rs_event() throws Exception {

@@ -6,14 +6,16 @@ import com.thoughtworks.rslist.dto.RsEventDto;
 import com.thoughtworks.rslist.dto.UserDto;
 import com.thoughtworks.rslist.repository.RsEventRepository;
 import com.thoughtworks.rslist.repository.UserRepository;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -33,6 +35,7 @@ class UserControllerTest {
     private UserRepository userRepository;
     UserDto userDto;
     RsEventDto rsEventDto;
+
     @BeforeEach
     void setUp() {
         userDto = UserDto.builder().email("wzw@qq.com").gender("male")
@@ -162,6 +165,7 @@ class UserControllerTest {
                 .andExpect(status().isOk());
         assertEquals(null, rsEventRepository.findByUserDtoId(1));
     }
+
     @AfterEach
     void tearDown() {
         rsEventRepository.deleteAll();

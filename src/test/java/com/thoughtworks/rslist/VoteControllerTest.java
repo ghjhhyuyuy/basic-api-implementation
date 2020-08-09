@@ -16,7 +16,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-
 import java.sql.Timestamp;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -47,9 +46,10 @@ class VoteControllerTest {
         rsEventDto = RsEventDto.builder().keyWord("经济").eventName("大爆炸").userDto(userDto).build();
         rsEventDto = rsEventRepository.save(rsEventDto);
     }
+
     @Test
     void should_add_vote_information() throws Exception {
-        Vote vote = new Vote(1,new Timestamp(System.currentTimeMillis()),1,1);
+        Vote vote = new Vote(1, new Timestamp(System.currentTimeMillis()), 1, 1);
         ObjectMapper objectMapper = new ObjectMapper();
         String jsonString = objectMapper.writeValueAsString(vote);
         mockMvc.perform(post("/rs/vote/2").content(jsonString)

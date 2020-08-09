@@ -16,12 +16,13 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class RsEventExceptionHandler {
     Logger logger = LoggerFactory.getLogger(RsEventExceptionHandler.class);
+
     @ExceptionHandler({InvalidIndexException.class, MethodArgumentNotValidException.class})
-    public ResponseEntity exceptionHandler(Exception e){
+    public ResponseEntity exceptionHandler(Exception e) {
         String errorMessage;
-        if(e instanceof InvalidIndexException){
+        if (e instanceof InvalidIndexException) {
             errorMessage = e.getMessage();
-        }else {
+        } else {
             errorMessage = "invalid param";
         }
         Error error = new Error();

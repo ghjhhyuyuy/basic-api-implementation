@@ -24,6 +24,7 @@ public class VoteController {
     private UserRepository userRepository;
     @Autowired
     private RsEventRepository rsEventRepository;
+
     @PostMapping("/rs/vote/{rsEventId}")
     public ResponseEntity addVote(@PathVariable int rsEventId, @RequestBody Vote vote) throws InvalidIndexException {
         VoteDto voteDto = new VoteDto();
