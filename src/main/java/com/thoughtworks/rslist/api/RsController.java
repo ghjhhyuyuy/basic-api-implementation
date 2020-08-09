@@ -28,17 +28,6 @@ public class RsController {
   private UserRepository userRepository;
   @Autowired
   private RsEventRepository rsEventRepository;
-  private List<RsEvent> rsList = new ArrayList<>();
-
-  RsController() {
-    RsEvent rsEvent = new RsEvent("第一条事件", "无标签",1);
-    RsEvent rsEvent1 = new RsEvent("第二条事件", "无标签",1);
-    RsEvent rsEvent2 = new RsEvent("第三条事件", "无标签",1);
-    rsList.add(rsEvent);
-    rsList.add(rsEvent1);
-    rsList.add(rsEvent2);
-  }
-
   @GetMapping("/rs/list")
   @ResponseBody
   public ResponseEntity rsList() {
@@ -49,7 +38,13 @@ public class RsController {
   @GetMapping("/rs/{index}")
   @ResponseBody
   public ResponseEntity rsListIndex(@PathVariable int index) throws InvalidIndexException {
-    return ResponseEntity.ok(rsEventRepository.findById(index));
+    Optional<RsEventDto> rsEventDtoOptional = rsEventRepository.findById(index);
+    if(rsEventDtoOptional.isPresent()){
+      return ResponseEntity.ok(rsEventDtoOptional.get());
+    }else {
+      throw new InvalidIndexException("invalid index");
+    }
+
   }
 
   @GetMapping("/rs/listBetween")
@@ -103,7 +98,11 @@ public class RsController {
 
   @DeleteMapping("/rs/delete/{index}")
   public ResponseEntity delete(@PathVariable int index) {
-    rsList.remove(index - 1);
+    RsEventDto rsEventDto = new RsEventDto();
+    if(rsEventRepository.findById(index).isPresent()){
+      rsEventDto = rsEventRepository.findById(index).get();
+    }
+    rsEventRepository.delete(rsEventDto);
     return ResponseEntity.ok().build();
   }
   private static void createTableByJdbc() throws SQLException {

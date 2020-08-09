@@ -20,7 +20,7 @@ import java.util.List;
 @NoArgsConstructor
 public class VoteDto {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     Timestamp voteTime;
     int voteNum;

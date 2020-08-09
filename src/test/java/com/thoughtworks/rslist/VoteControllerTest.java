@@ -49,7 +49,7 @@ class VoteControllerTest {
     }
     @Test
     void should_add_vote_information() throws Exception {
-        Vote vote = new Vote(2,new Timestamp(System.currentTimeMillis()),1,1);
+        Vote vote = new Vote(1,new Timestamp(System.currentTimeMillis()),1,1);
         ObjectMapper objectMapper = new ObjectMapper();
         String jsonString = objectMapper.writeValueAsString(vote);
         mockMvc.perform(post("/rs/vote/2").content(jsonString)
@@ -62,5 +62,8 @@ class VoteControllerTest {
         voteRepository.deleteAll();
         rsEventRepository.deleteAll();
         userRepository.deleteAll();
+        voteRepository.resetAutoIncrement();
+        rsEventRepository.resetAutoIncrement();
+        userRepository.resetAutoIncrement();
     }
 }

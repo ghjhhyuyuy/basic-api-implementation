@@ -17,7 +17,6 @@ public class RsEvent {
     @NotNull
     String keyWords;
     @NotNull
-    @Valid
     int userId;
 
     public RsEvent(@NotNull String eventName, @NotNull String keyWords, @NotNull @Valid int userId) {

@@ -19,7 +19,7 @@ import javax.persistence.*;
 @Table(name = "rsEventDto")
 public class RsEventDto {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String eventName;
     private String keyWord;

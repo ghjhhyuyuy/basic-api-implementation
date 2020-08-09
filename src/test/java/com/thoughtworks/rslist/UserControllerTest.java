@@ -24,7 +24,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @SpringBootTest
 @AutoConfigureMockMvc
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class UserControllerTest {
     @Autowired
     private MockMvc mockMvc;
@@ -44,7 +43,6 @@ class UserControllerTest {
     }
 
     @Test
-    @Order(1)
     void should_add_user() throws Exception {
         User user = new User("wzw", "male", 22, "wzw@qq.com", "18888888888", 5);
         ObjectMapper objectMapper = new ObjectMapper();
@@ -147,7 +145,6 @@ class UserControllerTest {
     }
 
     @Test
-    @Order(2)
     void should_return_user_message_by_user_id() throws Exception {
         mockMvc.perform(get("/user/1"))
                 .andExpect(jsonPath("$.name", is("wzw")))
@@ -155,12 +152,11 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.age", is(22)))
                 .andExpect(jsonPath("$.email", is("wzw@qq.com")))
                 .andExpect(jsonPath("$.phone", is("18888888888")))
-                .andExpect(jsonPath("$.voteNum", is(5)))
+                .andExpect(jsonPath("$.voteNum", is(10)))
                 .andExpect(status().isOk());
     }
 
     @Test
-    @Order(3)
     void should_delete_user_by_user_id() throws Exception {
         mockMvc.perform(delete("/user/delete/1"))
                 .andExpect(status().isOk());
@@ -170,5 +166,7 @@ class UserControllerTest {
     void tearDown() {
         rsEventRepository.deleteAll();
         userRepository.deleteAll();
+        rsEventRepository.resetAutoIncrement();
+        userRepository.resetAutoIncrement();
     }
 }

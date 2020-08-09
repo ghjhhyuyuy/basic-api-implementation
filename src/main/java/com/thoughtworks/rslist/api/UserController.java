@@ -23,22 +23,24 @@ import java.util.List;
 @RestController
 public class UserController {
     Logger logger = LoggerFactory.getLogger(UserController.class);
-    List<User> userList = new ArrayList<>();
     @Autowired
     private UserRepository userRepository;
     @PostMapping("/user")
-    public ResponseEntity addUser(@RequestBody @Valid User user){
+    public ResponseEntity addUser(@RequestBody @Valid User user) throws InvalidIndexException {
         List<UserDto> userDtoList = userRepository.findAll();
         UserDto userDto = UserDto.builder().email(user.getEmail()).gender(user.getGender())
                 .age(user.getAge()).phone(user.getPhone()).userName(user.getName()).voteNum(user.getVoteNum()).build();
         if(!userDtoList.contains(userDto)){
             userRepository.save(userDto);
+            return ResponseEntity.created(null).header("index", String.valueOf(userDtoList.size() + 1)).build();
+        }else {
+            throw new InvalidIndexException("Repeated Id");
         }
-        return ResponseEntity.created(null).header("index", String.valueOf(userList.size() - 1)).build();
+
     }
     @GetMapping("/users")
-    public ResponseEntity addUser(){
-        return ResponseEntity.ok(userList);
+    public ResponseEntity getAllUser(){
+        return ResponseEntity.ok(userRepository.findAll());
     }
     @GetMapping("/user/{index}")
     public  ResponseEntity getUserByIndex(@PathVariable int index){
