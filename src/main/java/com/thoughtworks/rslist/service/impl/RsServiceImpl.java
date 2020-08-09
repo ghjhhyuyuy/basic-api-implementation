@@ -1,16 +1,13 @@
 package com.thoughtworks.rslist.service.impl;
 
 import com.thoughtworks.rslist.domain.RsEvent;
-import com.thoughtworks.rslist.domain.User;
 import com.thoughtworks.rslist.dto.RsEventDto;
 import com.thoughtworks.rslist.dto.UserDto;
 import com.thoughtworks.rslist.exception.InvalidIndexException;
 import com.thoughtworks.rslist.repository.RsEventRepository;
 import com.thoughtworks.rslist.repository.UserRepository;
 import com.thoughtworks.rslist.service.RsService;
-import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,10 +22,17 @@ public class RsServiceImpl implements RsService {
     private UserRepository userRepository;
     @Autowired
     private RsEventRepository rsEventRepository;
+
+    public RsServiceImpl(UserRepository userRepository, RsEventRepository rsEventRepository) {
+        this.userRepository = userRepository;
+        this.rsEventRepository = rsEventRepository;
+    }
+
     @Override
     public List<RsEventDto> rsList() {
         return rsEventRepository.findAll();
     }
+
 
     @Override
     public RsEventDto rsListIndex(int index) throws InvalidIndexException {
@@ -45,31 +49,31 @@ public class RsServiceImpl implements RsService {
         List<RsEventDto> rsList = rsEventRepository.findAll();
         if (start <= 0 || end > rsList.size() || start > end) {
             throw new InvalidIndexException("invalid request param");
-        }else {
+        } else {
             return rsList.subList(start - 1, end);
         }
     }
 
     @Override
-    public boolean rsEvent(RsEvent rsEvent) {
+    public RsEventDto rsEvent(RsEvent rsEvent) throws InvalidIndexException {
         int userId = rsEvent.getUserId();
         Optional<UserDto> optionalUserDto = userRepository.findById(userId);
         if (optionalUserDto.isPresent()) {
             RsEventDto rsEventDto = RsEventDto.builder().eventName(rsEvent.getEventName()).keyWord(rsEvent.getKeyWords()).userDto(optionalUserDto.get()).build();
-            rsEventRepository.save(rsEventDto);
-            return true;
+            return rsEventRepository.save(rsEventDto);
+        }else {
+            throw new InvalidIndexException("invalid param");
         }
-        return false;
     }
 
     @Override
-    public boolean update(int rsEventId, RsEvent rsEvent) throws Exception {
+    public RsEventDto update(int rsEventId, RsEvent rsEvent) throws Exception {
         Optional<RsEventDto> rsEventDtoOptional = rsEventRepository.findById(rsEventId);
         RsEventDto rsEventDto = new RsEventDto();
         if (rsEventDtoOptional.isPresent()) {
             rsEventDto = rsEventDtoOptional.get();
         } else {
-            return false;
+            throw new InvalidIndexException("invalid param");
         }
         if (rsEventDto.getUserDto().getId() == rsEvent.getUserId()) {
             if (rsEvent.getEventName() == null && rsEvent.getKeyWords() == null) {
@@ -83,15 +87,17 @@ public class RsServiceImpl implements RsService {
             } else {
                 rsEventDto.setKeyWord(rsEvent.getKeyWords());
             }
-            rsEventRepository.save(rsEventDto);
-            return true;
+            return rsEventRepository.save(rsEventDto);
         }
-        return false;
+        throw new InvalidIndexException("invalid userId");
     }
 
     @Override
-    public boolean delete(int index) {
-        rsEventRepository.deleteById(index);
-        return true;
+    public void delete(int index) throws InvalidIndexException {
+        try {
+            rsEventRepository.deleteById(index);
+        }catch (Exception e){
+            throw new InvalidIndexException("invalid param");
+        }
     }
 }

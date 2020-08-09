@@ -37,27 +37,20 @@ public class RsController {
     }
 
     @PostMapping("/rs/event")
-    public ResponseEntity rsEvent(@RequestBody @Valid RsEvent rsEvent) {
-        if (rsService.rsEvent(rsEvent)) {
-            return ResponseEntity.created(null).build();
-        }
-        return ResponseEntity.badRequest().build();
+    public ResponseEntity rsEvent(@RequestBody @Valid RsEvent rsEvent) throws InvalidIndexException {
+        return ResponseEntity.created(null).body(rsService.rsEvent(rsEvent));
     }
 
     @PatchMapping(value = "/rs/{rsEventId}")
     public ResponseEntity update(@PathVariable int rsEventId, @RequestParam(required = false) String eventName, @RequestParam(required = false) String keyWords, @RequestParam int userId) throws Exception {
         RsEvent rsEvent = new RsEvent(eventName, keyWords, userId);
-        if (rsService.update(rsEventId, rsEvent)) {
-            return ResponseEntity.ok().build();
-        }
-        return ResponseEntity.badRequest().build();
+        RsEventDto rsEventDto = rsService.update(rsEventId, rsEvent);
+        return ResponseEntity.ok(rsEventDto);
     }
 
     @DeleteMapping("/rs/delete/{index}")
-    public ResponseEntity delete(@PathVariable int index) {
-        if (rsService.delete(index)) {
-            return ResponseEntity.ok().build();
-        }
-        return ResponseEntity.badRequest().build();
+    public ResponseEntity delete(@PathVariable int index) throws InvalidIndexException {
+        rsService.delete(index);
+        return ResponseEntity.ok().build();
     }
 }

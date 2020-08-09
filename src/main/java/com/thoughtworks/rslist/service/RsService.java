@@ -3,7 +3,6 @@ package com.thoughtworks.rslist.service;
 import com.thoughtworks.rslist.domain.RsEvent;
 import com.thoughtworks.rslist.dto.RsEventDto;
 import com.thoughtworks.rslist.exception.InvalidIndexException;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -17,9 +16,9 @@ public interface RsService {
 
     public List<RsEventDto> rsListBetween(int start, int end) throws InvalidIndexException;
 
-    public boolean rsEvent(RsEvent rsEvent);
+    public RsEventDto rsEvent(RsEvent rsEvent) throws InvalidIndexException;
 
-    public boolean update(int rsEventId, RsEvent rsEvent) throws Exception;
+    public RsEventDto update(int rsEventId, RsEvent rsEvent) throws Exception;
 
-    public boolean delete(int index);
+    public void delete(int index) throws InvalidIndexException;
 }

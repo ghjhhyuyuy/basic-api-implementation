@@ -1,4 +1,4 @@
-package com.thoughtworks.rslist;
+package com.thoughtworks.rslist.api;
 
 import com.thoughtworks.rslist.api.RsController;
 import com.thoughtworks.rslist.dto.RsEventDto;
