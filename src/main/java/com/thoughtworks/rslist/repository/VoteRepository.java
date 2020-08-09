@@ -4,8 +4,10 @@ import com.thoughtworks.rslist.dto.VoteDto;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 
 import javax.transaction.Transactional;
+import java.sql.Timestamp;
 import java.util.List;
 
 /**
@@ -19,4 +21,7 @@ public interface VoteRepository extends CrudRepository<VoteDto, Integer> {
     @Modifying
     @Transactional
     void resetAutoIncrement();
+
+    @Query(value = "SELECT * FROM vote WHERE vote_time  BETWEEN :startTime AND :endTime", nativeQuery = true)
+    List<VoteDto> findVotesByStartAndEnd(@Param("startTime") Timestamp startTime, @Param("endTime") Timestamp endTime);
 }

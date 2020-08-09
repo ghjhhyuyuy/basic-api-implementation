@@ -9,6 +9,9 @@ import com.thoughtworks.rslist.service.VoteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+import java.util.List;
+
 /**
  * Created by wzw on 2020/8/9.
  */
@@ -29,5 +32,13 @@ public class VoteServiceImpl implements VoteService {
         voteDto.setRsEventDto(rsEventRepository.findById(vote.getRsEventId()).get());
         voteDto.setUserDto(userRepository.findById(vote.getUserId()).get());
         voteRepository.save(voteDto);
+    }
+
+    @Override
+    public List<VoteDto> getVoteBeforeStartAndEnd(Timestamp startTime, Timestamp endTime) throws Exception {
+        if(startTime.after(endTime)){
+            throw new Exception("invalid request param");
+        }
+        return voteRepository.findVotesByStartAndEnd(startTime,endTime);
     }
 }
