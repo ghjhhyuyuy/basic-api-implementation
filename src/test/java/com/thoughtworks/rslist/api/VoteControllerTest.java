@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.rslist.domain.Vote;
 import com.thoughtworks.rslist.dto.RsEventDto;
 import com.thoughtworks.rslist.dto.UserDto;
+import com.thoughtworks.rslist.dto.VoteDto;
 import com.thoughtworks.rslist.repository.RsEventRepository;
 import com.thoughtworks.rslist.repository.UserRepository;
 import com.thoughtworks.rslist.repository.VoteRepository;
@@ -16,9 +17,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.sql.Time;
 import java.sql.Timestamp;
 
+import static org.hamcrest.Matchers.hasSize;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
@@ -37,6 +42,8 @@ class VoteControllerTest {
     VoteRepository voteRepository;
     UserDto userDto;
     RsEventDto rsEventDto;
+    VoteDto voteDto;
+    VoteDto voteDto1;
 
     @BeforeEach
     void setUp() {
@@ -45,6 +52,12 @@ class VoteControllerTest {
         userDto = userRepository.save(userDto);
         rsEventDto = RsEventDto.builder().keyWord("经济").eventName("大爆炸").userDto(userDto).build();
         rsEventDto = rsEventRepository.save(rsEventDto);
+        Timestamp time = new Timestamp(2016, 11, 7, 5, 12, 22, 0);
+        Timestamp time1 = new Timestamp(2020, 11, 7, 5, 12, 22, 0);
+        voteDto = VoteDto.builder().voteNum(2).voteTime(time).rsEventDto(rsEventDto).userDto(userDto).build();
+        voteDto = voteRepository.save(voteDto);
+        voteDto1 = VoteDto.builder().voteNum(2).voteTime(time1).rsEventDto(rsEventDto).userDto(userDto).build();
+        voteDto1 = voteRepository.save(voteDto1);
     }
 
     @Test
@@ -55,6 +68,15 @@ class VoteControllerTest {
         mockMvc.perform(post("/rs/vote/2").content(jsonString)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated());
+    }
+
+    @Test
+    void should_get_vote_when_given_start_and_end_time() throws Exception {
+        Timestamp startTime = new Timestamp(2016, 11, 7, 5, 12, 22, 0);
+        Timestamp endTime = new Timestamp(2017, 11, 7, 5, 12, 22, 0);
+        mockMvc.perform(get("/rs/vote?startTime=" + startTime + "&endTime=" + endTime))
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(status().isOk());
     }
 
     @AfterEach
