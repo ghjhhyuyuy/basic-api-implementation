@@ -5,6 +5,7 @@ import com.thoughtworks.rslist.dto.UserDto;
 import com.thoughtworks.rslist.exception.Error;
 import com.thoughtworks.rslist.exception.InvalidIndexException;
 import com.thoughtworks.rslist.repository.UserRepository;
+import com.thoughtworks.rslist.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,35 +23,29 @@ import java.util.List;
 public class UserController {
     Logger logger = LoggerFactory.getLogger(UserController.class);
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
 
     @PostMapping("/user")
     public ResponseEntity addUser(@RequestBody @Valid User user) throws InvalidIndexException {
-        List<UserDto> userDtoList = userRepository.findAll();
-        UserDto userDto = UserDto.builder().email(user.getEmail()).gender(user.getGender())
-                .age(user.getAge()).phone(user.getPhone()).userName(user.getName()).voteNum(user.getVoteNum()).build();
-        if (!userDtoList.contains(userDto)) {
-            userRepository.save(userDto);
-            return ResponseEntity.created(null).header("index", String.valueOf(userDtoList.size() + 1)).build();
-        } else {
-            throw new InvalidIndexException("Repeated Id");
-        }
-
+        userService.addUser(user);
+        return ResponseEntity.created(null).build();
     }
 
     @GetMapping("/users")
     public ResponseEntity getAllUser() {
-        return ResponseEntity.ok(userRepository.findAll());
+        List<UserDto> userDtoList = userService.getAllUser();
+        return ResponseEntity.ok(userDtoList);
     }
 
     @GetMapping("/user/{index}")
     public ResponseEntity getUserByIndex(@PathVariable int index) {
-        return ResponseEntity.ok(userRepository.findById(index));
+        UserDto userDto = userService.getUserByIndex(index);
+        return ResponseEntity.ok(userDto);
     }
 
     @DeleteMapping("/user/delete/{index}")
     public ResponseEntity deleteUserByIndex(@PathVariable int index) {
-        userRepository.deleteById(index);
+        userService.deleteUserByIndex(index);
         return ResponseEntity.ok().build();
     }
 

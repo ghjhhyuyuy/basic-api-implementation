@@ -1,22 +1,30 @@
 package com.thoughtworks.rslist;
 
+import com.thoughtworks.rslist.api.RsController;
 import com.thoughtworks.rslist.dto.RsEventDto;
 import com.thoughtworks.rslist.dto.UserDto;
 import com.thoughtworks.rslist.repository.RsEventRepository;
 import com.thoughtworks.rslist.repository.UserRepository;
 import com.thoughtworks.rslist.repository.VoteRepository;
+import com.thoughtworks.rslist.service.RsService;
 import org.junit.jupiter.api.*;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
 import java.util.List;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.MockitoAnnotations.initMocks;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -135,13 +143,11 @@ class RsListApplicationTests {
     @Test
     @Order(7)
     void delete_rs_event() throws Exception {
-        mockMvc.perform(delete("/rs/delete/2"))
+        mockMvc.perform(delete("/rs/delete/1"))
                 .andExpect(status().isOk());
-        mockMvc.perform(get("/rs/list")).andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].eventName", is("大爆炸")))
-                .andExpect(jsonPath("$[0].keyWord", is("经济")))
-                .andExpect(jsonPath("$[0]", not(hasKey("user"))))
+        mockMvc.perform(get("/rs/list"))
                 .andExpect(status().isOk());
+        assertEquals(true, rsEventRepository.findAll().isEmpty());
     }
 
     @Test
