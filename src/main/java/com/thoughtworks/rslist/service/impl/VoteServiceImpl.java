@@ -1,6 +1,8 @@
 package com.thoughtworks.rslist.service.impl;
 
 import com.thoughtworks.rslist.domain.Vote;
+import com.thoughtworks.rslist.dto.RsEventDto;
+import com.thoughtworks.rslist.dto.UserDto;
 import com.thoughtworks.rslist.dto.VoteDto;
 import com.thoughtworks.rslist.repository.RsEventRepository;
 import com.thoughtworks.rslist.repository.UserRepository;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by wzw on 2020/8/9.
@@ -29,8 +32,10 @@ public class VoteServiceImpl implements VoteService {
         VoteDto voteDto = new VoteDto();
         voteDto.setVoteNum(vote.getVoteNum());
         voteDto.setVoteTime(vote.getVoteTime());
-        voteDto.setRsEventDto(rsEventRepository.findById(vote.getRsEventId()).get());
-        voteDto.setUserDto(userRepository.findById(vote.getUserId()).get());
+        Optional<RsEventDto> optionalRsEventDto = rsEventRepository.findById(vote.getRsEventId());
+        optionalRsEventDto.ifPresent(voteDto::setRsEventDto);
+        Optional<UserDto> optionalUserDto = userRepository.findById(vote.getUserId());
+        optionalUserDto.ifPresent(voteDto::setUserDto);
         voteRepository.save(voteDto);
     }
 
