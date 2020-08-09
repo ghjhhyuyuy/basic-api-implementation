@@ -161,7 +161,7 @@ class UserControllerTest {
 
     @Test
     void should_delete_user_by_user_id() throws Exception {
-        mockMvc.perform(delete("/user/delete/1"))
+        mockMvc.perform(delete("/user/1"))
                 .andExpect(status().isOk());
         assertEquals(null, rsEventRepository.findByUserDtoId(1));
     }

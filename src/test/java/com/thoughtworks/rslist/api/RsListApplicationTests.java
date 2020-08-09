@@ -56,7 +56,7 @@ class RsListApplicationTests {
     @Test
     @Order(1)
     void get_rs_event_list() throws Exception {
-        mockMvc.perform(get("/rs/list")).andExpect(jsonPath("$", hasSize(1)))
+        mockMvc.perform(get("/rs/events")).andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].eventName", is("大爆炸")))
                 .andExpect(jsonPath("$[0].keyWord", is("经济")))
                 .andExpect(jsonPath("$[0]", not(hasKey("user"))))
@@ -66,7 +66,7 @@ class RsListApplicationTests {
     @Test
     @Order(2)
     void get_rs_event_number() throws Exception {
-        mockMvc.perform(get("/rs/1"))
+        mockMvc.perform(get("/rs/event/1"))
                 .andExpect(jsonPath("$.eventName", is("大爆炸")))
                 .andExpect(jsonPath("$.keyWord", is("经济")))
                 .andExpect(jsonPath("$", not(hasKey("user"))))
@@ -76,7 +76,7 @@ class RsListApplicationTests {
     @Test
     @Order(3)
     void get_rs_event_between() throws Exception {
-        mockMvc.perform(get("/rs/listBetween?start=1&end=1"))
+        mockMvc.perform(get("/rs/eventBetween?start=1&end=1"))
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].eventName", is("大爆炸")))
                 .andExpect(jsonPath("$[0].keyWord", is("经济")))
@@ -120,21 +120,21 @@ class RsListApplicationTests {
         mockMvc.perform(patch("/rs/1?eventName=房价降啦&userId=1")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
-        mockMvc.perform(get("/rs/1"))
+        mockMvc.perform(get("/rs/event/1"))
                 .andExpect(jsonPath("$.eventName", is("房价降啦")))
                 .andExpect(jsonPath("$.keyWord", is("经济")))
                 .andExpect(status().isOk());
         mockMvc.perform(patch("/rs/1?keyWords=战争&userId=1")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
-        mockMvc.perform(get("/rs/1"))
+        mockMvc.perform(get("/rs/event/1"))
                 .andExpect(jsonPath("$.eventName", is("房价降啦")))
                 .andExpect(jsonPath("$.keyWord", is("战争")))
                 .andExpect(status().isOk());
         mockMvc.perform(patch("/rs/1?eventName=第一条事件&keyWords=无标签&userId=1")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
-        mockMvc.perform(get("/rs/1"))
+        mockMvc.perform(get("/rs/event/1"))
                 .andExpect(jsonPath("$.eventName", is("第一条事件")))
                 .andExpect(jsonPath("$.keyWord", is("无标签")))
                 .andExpect(status().isOk());
@@ -145,21 +145,21 @@ class RsListApplicationTests {
     void delete_rs_event() throws Exception {
         mockMvc.perform(delete("/rs/delete/1"))
                 .andExpect(status().isOk());
-        mockMvc.perform(get("/rs/list"))
+        mockMvc.perform(get("/rs/events"))
                 .andExpect(status().isOk());
         assertEquals(true, rsEventRepository.findAll().isEmpty());
     }
 
     @Test
     void should_return_400_and_message_when_index_out_of_range() throws Exception {
-        mockMvc.perform(get("/rs/0"))
+        mockMvc.perform(get("/rs/event/0"))
                 .andExpect(jsonPath("$.error", is("invalid index")))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     void should_return_400_and_message_when_start_end_not_right() throws Exception {
-        mockMvc.perform(get("/rs/listBetween?start=0&end=2"))
+        mockMvc.perform(get("/rs/eventBetween?start=0&end=2"))
                 .andExpect(jsonPath("$.error", is("invalid request param")))
                 .andExpect(status().isBadRequest());
     }

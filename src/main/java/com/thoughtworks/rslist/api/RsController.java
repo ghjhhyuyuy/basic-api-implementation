@@ -17,20 +17,20 @@ public class RsController {
     @Autowired
     private RsService rsService;
 
-    @GetMapping("/rs/list")
+    @GetMapping("/rs/events")
     @ResponseBody
     public ResponseEntity rsList() {
         List<RsEventDto> rsList = rsService.rsList();
         return ResponseEntity.ok(rsList);
     }
 
-    @GetMapping("/rs/{index}")
+    @GetMapping("/rs/event/{index}")
     @ResponseBody
     public ResponseEntity rsListIndex(@PathVariable int index) throws InvalidIndexException {
         return ResponseEntity.ok(rsService.rsListIndex(index));
     }
 
-    @GetMapping("/rs/listBetween")
+    @GetMapping("/rs/eventBetween")
     @ResponseBody
     public ResponseEntity rsListBetween(@RequestParam int start, @RequestParam int end) throws InvalidIndexException {
         return ResponseEntity.ok(rsService.rsListBetween(start, end));

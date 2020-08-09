@@ -65,7 +65,7 @@ class VoteControllerTest {
         Vote vote = new Vote(1, new Timestamp(System.currentTimeMillis()), 1, 1);
         ObjectMapper objectMapper = new ObjectMapper();
         String jsonString = objectMapper.writeValueAsString(vote);
-        mockMvc.perform(post("/rs/vote/2").content(jsonString)
+        mockMvc.perform(post("/rs/2/vote").content(jsonString)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated());
     }
@@ -74,7 +74,7 @@ class VoteControllerTest {
     void should_get_vote_when_given_start_and_end_time() throws Exception {
         Timestamp startTime = new Timestamp(2016, 11, 7, 5, 12, 22, 0);
         Timestamp endTime = new Timestamp(2017, 11, 7, 5, 12, 22, 0);
-        mockMvc.perform(get("/rs/vote?startTime=" + startTime + "&endTime=" + endTime))
+        mockMvc.perform(get("/rs/voteBetween?startTime=" + startTime + "&endTime=" + endTime))
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(status().isOk());
     }

@@ -43,7 +43,7 @@ public class UserController {
         return ResponseEntity.ok(userDto);
     }
 
-    @DeleteMapping("/user/delete/{index}")
+    @DeleteMapping("/user/{index}")
     public ResponseEntity deleteUserByIndex(@PathVariable int index) {
         userService.deleteUserByIndex(index);
         return ResponseEntity.ok().build();

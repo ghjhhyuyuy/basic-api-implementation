@@ -20,12 +20,12 @@ public class VoteController {
     @Autowired
     private VoteService voteService;
 
-    @PostMapping("/rs/vote/{rsEventId}")
+    @PostMapping("/rs/{rsEventId}/vote")
     public ResponseEntity addVote(@PathVariable int rsEventId, @RequestBody Vote vote) throws InvalidIndexException {
         voteService.addVote(rsEventId, vote);
         return ResponseEntity.created(null).build();
     }
-    @GetMapping("/rs/vote")
+    @GetMapping("/rs/voteBetween")
     public ResponseEntity getVoteBeforeStartAndEnd(@RequestParam Timestamp startTime,@RequestParam Timestamp endTime) throws Exception {
         List<VoteDto> voteDtoList = voteService.getVoteBeforeStartAndEnd(startTime,endTime);
         return ResponseEntity.ok(voteDtoList);
